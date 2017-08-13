@@ -1,0 +1,18 @@
+body {
+    font: 10px sans-serif;
+}
+
+.x-Axis path,
+.x-Axis {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.y-Axis path,
+.y-Axis {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+

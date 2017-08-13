@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Marital status of Taipei city in the recently 10 years</title>
+        <script src="https://d3js.org/d3.v3.js"></script>
+        <link rel="stylesheet" href="style.css" type="text/css">
+    </head>
+
+    <body>
+        <h1>台北市近10年婚姻情形視覺化</h1>
+
+
+<script>
+    var barDim = {t:60,r:30,b:60,l:30};
+    var w=800-barDim.r-barDim.l;
+    var h=800-barDim.t-barDim.b;
+d3.select("body")                                         // 設定畫布
+  .append("svg")
+  .attr("width",w+barDim.r+barDim.l)
+  .attr("height",h+barDim.t+barDim.l)
+  .attr("transform","translate("+barDim.l+","+barDim.t+")");
+function unique(arr){
+    var n = [];
+    arr.forEach(function(d){
+        if(n.indexOf(d) === -1){
+           n.push(d);
+            };
+        });
+       return n;
+    };
+
+            
+d3.csv("tidy data.csv",type,function(dataSet){
+    var year = dataSet.map(function(d){return d.YEAR;}); //將YEAR變數以陣列輸出
+    var x = d3.scale.ordinal().domain(year.reverse()).rangeRoundBands([0,(w-barDim.r)],0.2);
+    var y = d3.scale.linear().domain([0,1200000]).range([h-200,0]);       
+    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+    var yAxis = d3.svg.axis().scale(y).ticks(10).orient("left");
+    var fscale = d3.scale.category10();
+    var selection = d3.select("svg")
+                      .selectAll("g")
+                      .data(dataSet);
+d3.select("svg").append("g").call(xAxis).attr("class","x-Axis").attr("transform","translate("+(barDim.l*2)+","+(h-barDim.b*2-20)+")");//設定X軸分組
+d3.select("svg").append("g").call(yAxis).attr("class","y-Axis").attr("transform","translate("+(barDim.l*2)+","+(barDim.t-20)+")");//設定Y軸分組
+    
+
+        
+    var chabar1 = selection.enter().append("g").attr( "class" , "bar1" );   //設定第1個變數之bar chart
+chabar1.append("rect").attr( "x" , function(d){return x(d.YEAR)+(barDim.l*2);} )
+                      .attr( "y" , function(d){return y(d.unmarried)+(barDim.t);} )
+                      .attr("width", x.rangeBand()/4 )
+                      .attr( "height" , function(d){return h-200-y(d.unmarried);} )
+                      .attr( "fill" , function(d,i){return fscale(1);})
+                      .on("mouseover", mouseover )
+                      .on("mouseout", mouseout);
+    var chabar2 = selection.enter().append("g").attr( "class" , "bar2" );   //設定第2個變數之bar chart
+chabar2.append("rect").attr("x", function(d){return x(d.YEAR)+x.rangeBand()/4+(barDim.l*2);} )
+                      .attr("y", function(d){return y(d.married)+(barDim.t);} )
+                      .attr( "width" , x.rangeBand()/4 )
+                      .attr( "height" , function(d){return h-200-y(d.married);} )
+                      .attr( "fill" , function(d,i){return fscale(2);})
+                      .on( "mouseover" , mouseover )
+                      .on( "mouseout" , mouseout );          
+    var chabar3 = selection.enter().append("g").attr( "class" , "bar3" );   //設定第3個變數之bar chart
+chabar3.append("rect").attr("x", function(d){return x(d.YEAR)+x.rangeBand()/2+(barDim.l*2);} )
+                      .attr("y", function(d){return y(d.divorce)+(barDim.t);} )
+                      .attr("width", x.rangeBand()/4 )
+                      .attr("height", function(d){return h-200-y(d.divorce);} )
+                      .attr( "fill" , function(d,i){return fscale(3);})
+                      .on( "mouseover" , mouseover )
+                      .on( "mouseout" , mouseout );
+    var chabar4 = selection.enter().append("g").attr( "class" , "bar4" );   //設定第4個變數之bar chart
+chabar4.append("rect").attr( "x" , function(d){return x(d.YEAR)+(x.rangeBand()/4)*3+(barDim.l*2);} )
+                      .attr( "y" , function(d){return y(d.widowed)+(barDim.t);} )
+                      .attr( "width" , x.rangeBand()/4 )
+                      .attr( "height" , function(d){return h-200-y(d.widowed);} )
+                      .attr( "fill" , function(d,i){return fscale(4);})
+                      .on( "mouseover" , mouseover )
+                      .on( "mouseout" , mouseout );
+    
+function mouseover(d){
+    var tmp_color = d3.select(this).attr("fill");
+    d3.select(this).attr("fill",tmp_color)
+                   .attr("opacity",0.9);    
+    };
+    
+function mouseout(d){
+    var tmp_color = d3.select(this).attr("fill");
+    d3.select(this).attr("fill",tmp_color)
+                   .attr("opacity",1);
+    };
+         
+});//d3.csv end-point.
+            
+function type(d){                 
+    d.unmarried = + d.unmarried;
+    d.married = + d.married;
+    d.divorce = + d.divorce;
+    d.widowed = + d.widowed;
+     return d;
+    };
+
+        </script>
+    </body>
+</html>
